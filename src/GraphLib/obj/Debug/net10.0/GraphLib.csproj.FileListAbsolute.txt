@@ -1,0 +1,13 @@
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\bin\Debug\net10.0\GraphLib.deps.json
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\bin\Debug\net10.0\GraphLib.dll
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\bin\Debug\net10.0\GraphLib.pdb
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\bin\Debug\net10.0\GraphLib.xml
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\GraphLib.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\GraphLib.AssemblyInfoInputs.cache
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\GraphLib.AssemblyInfo.cs
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\GraphLib.csproj.CoreCompileInputs.cache
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\GraphLib.dll
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\refint\GraphLib.dll
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\GraphLib.xml
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\GraphLib.pdb
+C:\Users\codycarlson\git\eprod\prompt\GraphLib\src\GraphLib\obj\Debug\net10.0\ref\GraphLib.dll

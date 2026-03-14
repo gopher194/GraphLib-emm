@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GraphLib</name>
+    </assembly>
+    <members>
+        <member name="T:GraphLib.CycleDetectedException">
+            <summary>
+            The exception that is thrown when an operation would introduce a cycle
+            in a <see cref="T:GraphLib.DirectedAcyclicGraph`1"/>.
+            </summary>
+            <remarks>
+            This exception inherits from <see cref="T:System.InvalidOperationException"/>,
+            allowing callers to catch either the specific type or the broader base type.
+            </remarks>
+            <seealso cref="T:GraphLib.DirectedAcyclicGraph`1"/>
+            <seealso cref="M:GraphLib.DirectedAcyclicGraph`1.AddEdge(`0,`0)"/>
+        </member>
+        <member name="M:GraphLib.CycleDetectedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:GraphLib.CycleDetectedException"/> class.
+            </summary>
+        </member>
+        <member name="M:GraphLib.CycleDetectedException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:GraphLib.CycleDetectedException"/> class
+            with a specified error message.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:GraphLib.CycleDetectedException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:GraphLib.CycleDetectedException"/> class
+            with a specified error message and a reference to the inner exception that
+            is the cause of this exception.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+            <param name="innerException">The exception that is the cause of the current exception.</param>
+        </member>
+        <member name="T:GraphLib.DirectedAcyclicGraph`1">
+            <summary>
+            Represents a directed acyclic graph (DAG), which is a directed graph whose edges
+            never allow a vertex to be reached again by following outgoing edges.
+            </summary>
+            <typeparam name="T">The type used to identify vertices stored in the graph.</typeparam>
+            <remarks>
+            This implementation preserves acyclicity by rejecting self-loops and any edge that
+            would create a path back to its source vertex. Because the graph always remains acyclic,
+            <see cref="M:GraphLib.DirectedAcyclicGraph`1.TopologicalSort"/> can produce an ordering in which each vertex appears
+            before all of its successors.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.DirectedAcyclicGraph`1.AddEdge(`0,`0)">
+            <inheritdoc/>
+            <remarks>
+            In addition to the exceptions inherited from <see cref="M:GraphLib.DirectedGraph`1.AddEdge(`0,`0)"/>,
+            this override validates that the proposed edge would not introduce a cycle. Self-loops
+            are treated as cycles and therefore also result in <see cref="T:GraphLib.CycleDetectedException"/>.
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when <paramref name="from"/> or <paramref name="to"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown when either vertex does not exist in the graph or when the edge already exists.
+            </exception>
+            <exception cref="T:GraphLib.CycleDetectedException">
+            Thrown when adding the edge would create a cycle, including the special case where
+            <paramref name="from"/> and <paramref name="to"/> represent the same vertex.
+            </exception>
+        </member>
+        <member name="M:GraphLib.DirectedAcyclicGraph`1.TopologicalSort">
+            <summary>
+            Returns a topological ordering of all vertices in the graph.
+            </summary>
+            <returns>
+            A read-only list that contains each vertex exactly once, ordered so every vertex
+            appears before all of its successors.
+            </returns>
+            <remarks>
+            This method uses Kahn's algorithm. It starts with every vertex whose in-degree is zero,
+            repeatedly removes one such vertex from the working queue, and then decreases the in-degree
+            of each successor. Because <see cref="M:GraphLib.DirectedAcyclicGraph`1.AddEdge(`0,`0)"/> prevents cycles, the returned ordering
+            always includes all vertices in the graph.
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown when the graph contains no vertices.
+            </exception>
+        </member>
+        <member name="M:GraphLib.DirectedAcyclicGraph`1.WouldCreateCycle(`0,`0)">
+            <summary>
+            Determines whether adding an edge from one vertex to another would introduce a cycle.
+            </summary>
+            <param name="from">The proposed source vertex.</param>
+            <param name="to">The proposed destination vertex.</param>
+            <returns>
+            <see langword="true"/> if a path already exists from <paramref name="to"/> to
+            <paramref name="from"/>; otherwise, <see langword="false"/>.
+            </returns>
+            <remarks>
+            The cycle check performs a depth-first search starting at <paramref name="to"/>.
+            If <paramref name="from"/> is reachable, adding the proposed edge would close a cycle.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.DirectedAcyclicGraph`1.HasPath(`0,`0,System.Collections.Generic.HashSet{`0})">
+            <summary>
+            Determines whether a directed path exists from one vertex to another.
+            </summary>
+            <param name="current">The vertex currently being explored.</param>
+            <param name="target">The destination vertex being searched for.</param>
+            <param name="visited">The set of vertices that have already been visited during the search.</param>
+            <returns>
+            <see langword="true"/> if <paramref name="target"/> is reachable from <paramref name="current"/>;
+            otherwise, <see langword="false"/>.
+            </returns>
+            <remarks>
+            This helper uses depth-first search and tracks visited vertices to avoid revisiting nodes
+            while traversing the graph.
+            </remarks>
+        </member>
+        <member name="T:GraphLib.DirectedGraph`1">
+            <summary>
+            Represents a directed graph whose edges have distinct source and destination vertices.
+            </summary>
+            <typeparam name="T">The type used to identify vertices in the graph.</typeparam>
+            <remarks>
+            Outgoing edges are stored in the inherited adjacency map, while incoming edges are tracked in a
+            separate reverse adjacency map for predecessor and in-degree queries.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.AddVertex(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.RemoveVertex(`0)">
+            <inheritdoc cref="M:GraphLib.Graph`1.RemoveVertex(`0)"/>
+            <remarks>
+            Removing a vertex from a directed graph deletes both incoming and outgoing edges for that
+            vertex.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.AddEdge(`0,`0)">
+            <inheritdoc cref="M:GraphLib.Graph`1.AddEdge(`0,`0)"/>
+            <remarks>
+            A directed graph stores only the edge from <paramref name="from"/> to <paramref name="to"/>.
+            No reciprocal edge is added automatically.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.RemoveEdge(`0,`0)">
+            <inheritdoc cref="M:GraphLib.Graph`1.RemoveEdge(`0,`0)"/>
+            <remarks>
+            Only the directed edge from <paramref name="from"/> to <paramref name="to"/> is removed.
+            </remarks>
+        </member>
+        <member name="P:GraphLib.DirectedGraph`1.EdgeCount">
+            <summary>
+            Gets the number of directed edges currently stored in the graph.
+            </summary>
+            <value>The total number of directed edges in the graph.</value>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.GetNeighbors(`0)">
+            <inheritdoc cref="M:GraphLib.Graph`1.GetNeighbors(`0)"/>
+            <remarks>
+            In a directed graph, neighbors are the successors that can be reached through outgoing edges.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.GetSuccessors(`0)">
+            <summary>
+            Gets the vertices reachable from the specified vertex through outgoing edges.
+            </summary>
+            <param name="vertex">The vertex whose successors should be returned.</param>
+            <returns>A collection containing the outgoing neighbors of <paramref name="vertex"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="vertex"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <paramref name="vertex"/> does not exist in the graph.</exception>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.GetPredecessors(`0)">
+            <summary>
+            Gets the vertices that have outgoing edges to the specified vertex.
+            </summary>
+            <param name="vertex">The vertex whose predecessors should be returned.</param>
+            <returns>A collection containing the incoming neighbors of <paramref name="vertex"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="vertex"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <paramref name="vertex"/> does not exist in the graph.</exception>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.InDegree(`0)">
+            <summary>
+            Gets the number of incoming edges for the specified vertex.
+            </summary>
+            <param name="vertex">The vertex whose in-degree should be returned.</param>
+            <returns>The number of incoming edges for <paramref name="vertex"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="vertex"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <paramref name="vertex"/> does not exist in the graph.</exception>
+        </member>
+        <member name="M:GraphLib.DirectedGraph`1.OutDegree(`0)">
+            <summary>
+            Gets the number of outgoing edges for the specified vertex.
+            </summary>
+            <param name="vertex">The vertex whose out-degree should be returned.</param>
+            <returns>The number of outgoing edges for <paramref name="vertex"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="vertex"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <paramref name="vertex"/> does not exist in the graph.</exception>
+        </member>
+        <member name="T:GraphLib.Graph`1">
+            <summary>
+            Represents a graph whose vertices are unique, non-null values of type <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">The type used to identify vertices in the graph.</typeparam>
+            <remarks>
+            The base implementation models an undirected graph by storing each edge in both connected
+            vertices' adjacency sets. Derived types can override members to provide different edge semantics.
+            </remarks>
+        </member>
+        <member name="F:GraphLib.Graph`1._adjacency">
+            <summary>
+            Maps each vertex to the set of vertices directly connected to it.
+            </summary>
+            <remarks>
+            In the base implementation, each edge is stored in both connected vertices' adjacency sets.
+            Derived types can reuse this dictionary to represent outgoing edges.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.Graph`1.AddVertex(`0)">
+            <summary>
+            Adds a vertex to the graph.
+            </summary>
+            <param name="vertex">The vertex to add.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="vertex"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="vertex"/> already exists in the graph.</exception>
+        </member>
+        <member name="M:GraphLib.Graph`1.RemoveVertex(`0)">
+            <summary>
+            Removes a vertex and every edge connected to it.
+            </summary>
+            <param name="vertex">The vertex to remove.</param>
+            <returns><see langword="true"/> if the vertex existed and was removed; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="vertex"/> is <see langword="null"/>.</exception>
+            <remarks>
+            The current neighbor set is materialized before back-links are removed so the method does not
+            modify a collection while it is being enumerated.
+            </remarks>
+        </member>
+        <member name="M:GraphLib.Graph`1.AddEdge(`0,`0)">
+            <summary>
+            Adds an undirected edge between two existing vertices.
+            </summary>
+            <param name="from">One endpoint of the edge.</param>
+            <param name="to">The other endpoint of the edge.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="from"/> or <paramref name="to"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="from"/> and <paramref name="to"/> identify the same vertex.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when either vertex does not exist or the edge already exists.</exception>
+        </member>
+        <member name="M:GraphLib.Graph`1.RemoveEdge(`0,`0)">
+            <summary>
+            Removes an undirected edge between two vertices.
+            </summary>
+            <param name="from">One endpoint of the edge to remove.</param>
+            <param name="to">The other endpoint of the edge to remove.</param>
+            <returns><see langword="true"/> if the edge existed and was removed; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="from"/> or <paramref name="to"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:GraphLib.Graph`1.HasVertex(`0)">
+            <summary>
+            Determines whether the graph contains the specified vertex.
+            </summary>
+            <param name="vertex">The vertex to locate.</param>
+            <returns><see langword="true"/> if <paramref name="vertex"/> exists in the graph; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:GraphLib.Graph`1.HasEdge(`0,`0)">
+            <summary>
+            Determines whether an edge exists between two vertices.
+            </summary>
+            <param name="from">One endpoint to evaluate.</param>
+            <param name="to">The other endpoint to evaluate.</param>
+            <returns><see langword="true"/> if an edge exists between the specified vertices; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="P:GraphLib.Graph`1.VertexCount">
+            <summary>
+            Gets the number of vertices currently stored in the graph.
+            </summary>
+            <value>The total number of vertices in the graph.</value>
+        </member>
+        <member name="P:GraphLib.Graph`1.EdgeCount">
+            <summary>
+            Gets the number of undirected edges currently stored in the graph.
+            </summary>
+            <value>The total number of edges in the graph.</value>
+        </member>
+        <member name="P:GraphLib.Graph`1.Vertices">
+            <summary>
+            Gets a snapshot of the vertices currently stored in the graph.
+            </summary>
+            <value>A collection containing the current vertices.</value>
+        </member>
+        <member name="M:GraphLib.Graph`1.GetVertices">
+            <summary>
+            Returns a snapshot of the vertices currently stored in the graph.
+            </summary>
+            <returns>A collection containing the current vertices.</returns>
+        </member>
+        <member name="M:GraphLib.Graph`1.GetNeighbors(`0)">
+            <summary>
+            Gets the vertices adjacent to the specified vertex.
+            </summary>
+            <param name="vertex">The vertex whose adjacent vertices should be returned.</param>
+            <returns>A collection containing the vertices adjacent to <paramref name="vertex"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="vertex"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when <paramref name="vertex"/> does not exist in the graph.</exception>
+            <remarks>
+            In the base undirected graph, the returned neighbors are all vertices that share an edge with
+            <paramref name="vertex"/>.
+            </remarks>
+        </member>
+    </members>
+</doc>
